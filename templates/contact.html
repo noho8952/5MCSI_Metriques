@@ -1,35 +1,433 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Contactez-moi</title>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
-        .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h2 { color: #333; border-bottom: 2px solid #5cb85c; padding-bottom: 10px; }
-        label { display: block; margin-top: 15px; font-weight: bold; }
-        input[type="text"], textarea { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { background-color: #5cb85c; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; margin-top: 20px; }
-        button:hover { background-color: #4cae4c; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contact • Futur UI</title>
+
+  <style>
+    :root{
+      --bg0:#05060a;
+      --bg1:#0b1022;
+      --glass: rgba(255,255,255,.08);
+      --glass2: rgba(255,255,255,.12);
+      --stroke: rgba(255,255,255,.18);
+      --text: rgba(255,255,255,.88);
+      --muted: rgba(255,255,255,.62);
+      --neon1:#7c3aed;   /* violet */
+      --neon2:#22d3ee;   /* cyan */
+      --neon3:#34d399;   /* green */
+      --shadow: 0 20px 60px rgba(0,0,0,.55);
+      --radius: 18px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background: radial-gradient(1200px 800px at 20% 10%, rgba(124,58,237,.25), transparent 60%),
+                  radial-gradient(900px 700px at 80% 30%, rgba(34,211,238,.18), transparent 55%),
+                  radial-gradient(1000px 700px at 40% 90%, rgba(52,211,153,.12), transparent 55%),
+                  linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
+
+    /* Animated aurora */
+    .aurora{
+      position:fixed; inset:-40vmax;
+      filter: blur(55px);
+      opacity:.65;
+      pointer-events:none;
+      mix-blend-mode: screen;
+      animation: drift 14s ease-in-out infinite alternate;
+      background:
+        radial-gradient(circle at 25% 30%, rgba(124,58,237,.55), transparent 55%),
+        radial-gradient(circle at 70% 40%, rgba(34,211,238,.45), transparent 55%),
+        radial-gradient(circle at 50% 75%, rgba(52,211,153,.35), transparent 55%);
+    }
+    @keyframes drift{
+      from{ transform: translate3d(-2%, -1%, 0) rotate(-2deg) }
+      to  { transform: translate3d( 2%,  1%, 0) rotate( 2deg) }
+    }
+
+    /* Subtle grid */
+    .grid{
+      position:fixed; inset:0;
+      background:
+        linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,.06) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(circle at 50% 30%, rgba(0,0,0,1), rgba(0,0,0,.2) 55%, transparent 75%);
+      opacity:.18;
+      pointer-events:none;
+    }
+
+    .wrap{
+      min-height:100%;
+      display:grid;
+      place-items:center;
+      padding: 48px 18px;
+    }
+
+    .card{
+      width:min(760px, 100%);
+      border-radius: calc(var(--radius) + 10px);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      border: 1px solid var(--stroke);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      position:relative;
+      overflow:hidden;
+      transform-style: preserve-3d;
+    }
+
+    /* Neon border glow */
+    .card::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: conic-gradient(from 180deg,
+        rgba(124,58,237,.0),
+        rgba(124,58,237,.65),
+        rgba(34,211,238,.65),
+        rgba(52,211,153,.55),
+        rgba(124,58,237,.65),
+        rgba(124,58,237,.0)
+      );
+      filter: blur(10px);
+      opacity:.55;
+      pointer-events:none;
+    }
+    .card::after{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(500px 240px at 20% 0%, rgba(255,255,255,.12), transparent 60%),
+                  radial-gradient(520px 260px at 90% 20%, rgba(255,255,255,.10), transparent 60%);
+      pointer-events:none;
+    }
+
+    header{
+      padding: 28px 26px 12px;
+      position:relative;
+      z-index:1;
+    }
+    .badge{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
+      color: var(--muted);
+      font-size: .9rem;
+      letter-spacing:.2px;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: radial-gradient(circle, rgba(34,211,238,1), rgba(124,58,237,.9));
+      box-shadow: 0 0 16px rgba(34,211,238,.8);
+    }
+
+    h1{
+      margin: 14px 0 8px;
+      font-size: clamp(1.5rem, 2.4vw, 2.2rem);
+      line-height:1.15;
+      letter-spacing:-.4px;
+    }
+    .subtitle{
+      margin:0;
+      color: var(--muted);
+      max-width: 56ch;
+    }
+
+    form{
+      padding: 18px 26px 28px;
+      position:relative;
+      z-index:1;
+      display:grid;
+      gap:14px;
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+    }
+    @media (max-width: 720px){
+      .row{ grid-template-columns: 1fr; }
+    }
+
+    label{
+      display:block;
+      font-size:.92rem;
+      color: rgba(255,255,255,.78);
+      margin: 0 0 8px;
+    }
+
+    .field{
+      position:relative;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(10,12,20,.35);
+      overflow:hidden;
+      transition: border-color .2s ease, transform .2s ease;
+    }
+    .field:focus-within{
+      border-color: rgba(34,211,238,.55);
+      transform: translateY(-1px);
+      box-shadow: 0 0 0 4px rgba(34,211,238,.10);
+    }
+
+    input, textarea{
+      width:100%;
+      padding: 14px 14px 14px 44px;
+      border:0;
+      outline:0;
+      background: transparent;
+      color: var(--text);
+      font-size: 1rem;
+    }
+    textarea{ resize: vertical; min-height: 140px; }
+
+    .icon{
+      position:absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width:18px; height:18px;
+      opacity:.85;
+      color: rgba(255,255,255,.65);
+      pointer-events:none;
+    }
+
+    .actions{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      margin-top: 6px;
+    }
+
+    .btn{
+      appearance:none;
+      border:0;
+      cursor:pointer;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-weight: 700;
+      letter-spacing:.2px;
+      color: rgba(255,255,255,.92);
+      background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(34,211,238,.85));
+      box-shadow: 0 14px 28px rgba(0,0,0,.45);
+      transition: transform .15s ease, filter .15s ease;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+    }
+    .btn:hover{ transform: translateY(-2px); filter: brightness(1.05); }
+    .btn:active{ transform: translateY(0px); }
+
+    .ghost{
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.14);
+      color: rgba(255,255,255,.78);
+      box-shadow:none;
+      font-weight:600;
+    }
+
+    .hint{
+      color: rgba(255,255,255,.55);
+      font-size:.9rem;
+      line-height:1.4;
+    }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%) translateY(24px);
+      opacity:0;
+      pointer-events:none;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(10,12,20,.55);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 18px 50px rgba(0,0,0,.55);
+      transition: opacity .22s ease, transform .22s ease;
+      color: rgba(255,255,255,.82);
+      max-width: min(560px, calc(100% - 24px));
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      z-index: 50;
+    }
+    .toast.show{
+      opacity:1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .toast strong{ color: rgba(255,255,255,.92); }
+
+    /* Small footer line */
+    .footer{
+      padding: 0 26px 22px;
+      color: rgba(255,255,255,.45);
+      font-size:.86rem;
+      position:relative;
+      z-index:1;
+    }
+
+    /* Accessibility */
+    .sr-only{
+      position:absolute;
+      width:1px; height:1px;
+      padding:0; margin:-1px;
+      overflow:hidden; clip:rect(0,0,0,0);
+      white-space:nowrap; border:0;
+    }
+  </style>
 </head>
+
 <body>
-    <div class="container">
-        <h2>📧 Laissez-moi un message</h2>
-        <form>
-            <label for="nom">Nom :</label>
-            <input type="text" id="nom" name="nom" required>
+  <div class="aurora"></div>
+  <div class="grid"></div>
 
-            <label for="prenom">Prénom :</label>
-            <input type="text" id="prenom" name="prenom" required>
+  <main class="wrap">
+    <section class="card" id="card">
+      <header>
+        <div class="badge"><span class="dot"></span> Canal sécurisé • Transmission chiffrée (simulation)</div>
+        <h1>📡 Contact — Interface Futuriste</h1>
+        <p class="subtitle">Envoie un message comme si tu parlais à une IA de l’an 2086. (Ici, c’est une simulation : rien n’est sauvegardé.)</p>
+      </header>
 
-            <label for="message">Votre Message :</label>
-            <textarea id="message" name="message" rows="5" required></textarea>
+      <form id="contactForm" autocomplete="on">
+        <div class="row">
+          <div>
+            <label for="nom">Nom</label>
+            <div class="field">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M20 21a8 8 0 0 0-16 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                <path d="M12 13a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" stroke="currentColor" stroke-width="1.6"/>
+              </svg>
+              <input type="text" id="nom" name="nom" placeholder="Ex: Durand" required />
+            </div>
+          </div>
 
-            <button type="submit">Envoyer (Simulation)</button>
-            <p style="margin-top: 20px; font-size: 0.9em; color: #777;">*L'enregistrement des données n'est pas actif pour cet exercice.</p>
-        </form>
+          <div>
+            <label for="prenom">Prénom</label>
+            <div class="field">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M4 21a8 8 0 0 1 16 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                <path d="M12 13a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" stroke="currentColor" stroke-width="1.6"/>
+              </svg>
+              <input type="text" id="prenom" name="prenom" placeholder="Ex: Noha" required />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label for="message">Votre message</label>
+          <div class="field">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="top:18px; transform:none;">
+              <path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+            <textarea id="message" name="message" rows="6" placeholder="Tape ton message… (ex: “Salut IA, peux-tu analyser ce signal ?”)"
+              required></textarea>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn" type="submit">
+            <span>Envoyer</span>
+            <span aria-hidden="true">➜</span>
+          </button>
+
+          <button class="btn ghost" type="button" id="resetBtn">
+            Réinitialiser
+          </button>
+
+          <p class="hint">💡 Astuce : appuie sur <strong>Ctrl</strong> + <strong>Entrée</strong> pour envoyer.</p>
+        </div>
+      </form>
+
+      <div class="footer">
+        *Aucune donnée n’est enregistrée. Pour un vrai envoi, il faudra un backend (PHP/Node/Forms…).
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <span aria-hidden="true">✅</span>
+    <div>
+      <strong>Transmission simulée</strong>
+      <div id="toastText">Message envoyé (simulation).</div>
     </div>
+  </div>
+
+  <script>
+    // Small 3D tilt effect (mouse)
+    const card = document.getElementById("card");
+    const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
+
+    card.addEventListener("mousemove", (e) => {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width;
+      const y = (e.clientY - r.top) / r.height;
+
+      const rx = clamp((0.5 - y) * 10, -8, 8);
+      const ry = clamp((x - 0.5) * 12, -10, 10);
+
+      card.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) translateZ(0)`;
+    });
+
+    card.addEventListener("mouseleave", () => {
+      card.style.transform = "rotateX(0deg) rotateY(0deg)";
+    });
+
+    // Toast + submit simulation
+    const form = document.getElementById("contactForm");
+    const toast = document.getElementById("toast");
+    const toastText = document.getElementById("toastText");
+    const resetBtn = document.getElementById("resetBtn");
+
+    function showToast(text){
+      toastText.textContent = text;
+      toast.classList.add("show");
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => toast.classList.remove("show"), 2400);
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const nom = form.nom.value.trim();
+      const prenom = form.prenom.value.trim();
+      const message = form.message.value.trim();
+
+      if(!nom || !prenom || !message){
+        showToast("⚠️ Remplis tous les champs.");
+        return;
+      }
+
+      showToast(`Message envoyé (simulation) — Merci ${prenom} !`);
+      form.reset();
+    });
+
+    resetBtn.addEventListener("click", () => {
+      form.reset();
+      showToast("Formulaire réinitialisé.");
+    });
+
+    // Ctrl + Enter to send
+    form.addEventListener("keydown", (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+        form.requestSubmit();
+      }
+    });
+  </script>
 </body>
 </html>
-﻿
